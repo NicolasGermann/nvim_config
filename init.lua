@@ -250,7 +250,7 @@ map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
 map('t', '<C-l>', '<C-\\><C-n>:FloatermNext<CR>', opts)
 map('t', '<C-h>', '<C-\\><C-n>:FloatermPrev<CR>', opts)
 map('t', '<C-k>', '<C-\\><C-n>:FloatermKill<CR>', opts)
-map('t', '<C-i>', '<C-\\><C-n>', opts)
+map('t', '<C-n>', '<C-\\><C-n>', opts)
 
 
 -- harpoon
