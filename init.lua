@@ -202,6 +202,9 @@ vim.g.floaterm_position = 'topleft'
 vim.g.floaterm_height = 0.3
 vim.g.floaterm_width = 0.4
 
+--line counting
+vim.wo.relativenumber = true
+
 -- Telescope Funktionen unter Leertaste belegen
 map('n', '<Leader>f', ':Telescope find_files<CR>', opts)
 map('n', '<Leader>G', ':Telescope live_grep<CR>', opts)
@@ -252,6 +255,12 @@ map('t', '<C-h>', '<C-\\><C-n>:FloatermPrev<CR>', opts)
 map('t', '<C-k>', '<C-\\><C-n>:FloatermKill<CR>', opts)
 map('t', '<C-n>', '<C-\\><C-n>', opts)
 
+-- Strg-w-Befehle im Terminal-Modus aktivieren
+local opts = { noremap = true, silent = true }
+vim.api.nvim_set_keymap('t', '<C-w>h', '<C-\\><C-n><C-w>h', opts) -- Wechsel zu linkem Fenster
+vim.api.nvim_set_keymap('t', '<C-w>j', '<C-\\><C-n><C-w>j', opts) -- Wechsel zu unterem Fenster
+vim.api.nvim_set_keymap('t', '<C-w>k', '<C-\\><C-n><C-w>k', opts) -- Wechsel zu oberem Fenster
+vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
 
 -- harpoon
 Harpoon = require("harpoon")
