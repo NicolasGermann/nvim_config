@@ -240,6 +240,8 @@ opts.desc = "terminal"
 map('n', '<Leader>t','',  opts)
 opts.desc = "terminal kill"
 map('n', '<Leader>tk', ':FloatermKill<CR>', opts)
+opts.desc = "terminal new"
+map('n', '<Leader>tn', ':FloatermNew<CR>', opts)
 opts.desc = "create large terminal"
 map("n", "<leader>tf",
 	":FloatermNew --height=0.9 --width=0.9 --wintype=float --name=lazygit --position=center<CR>",
@@ -248,7 +250,7 @@ opts.desc = "open nvim config"
 map('n', '<Leader>i', ':e ~/.config/nvim/init.lua<CR>', opts)
 
 
-map('t', '<C-n>', '<C-\\><C-n>:FloatermNew<CR>', opts)
+map('t', '<C-j>', '<C-\\><C-n>:FloatermNew<CR>', opts)
 map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
 map('t', '<C-l>', '<C-\\><C-n>:FloatermNext<CR>', opts)
 map('t', '<C-h>', '<C-\\><C-n>:FloatermPrev<CR>', opts)
@@ -298,5 +300,4 @@ function Floatwindow(width, height)
 	{relative='editor', width=width, height=height, row=math.floor((vim.o.lines - height) / 2), col=math.floor((vim.o.columns - width) / 2), style='minimal'})
 end
 map('n', '<C-w>f', ':lua Floatwindow(200,50) <CR>', opts)
-
 
