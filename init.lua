@@ -238,8 +238,6 @@ opts.desc = "quit"
 map('n', '<Leader>q', ':q<CR>', opts)
 opts.desc = "clear search"
 map('n', '<Leader>c', ':noh<CR>', opts)
-opts.desc = "vertical split"
-map('n', '<Leader>D', ':Vex<CR>', opts)
 opts.desc = "directory"
 map('n', '<Leader>d', ':e .<CR>', opts)
 opts.desc = "terminal toggle"
