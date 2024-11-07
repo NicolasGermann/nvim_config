@@ -66,8 +66,18 @@ require('packer').startup(function(use)
 	use 'hrsh7th/cmp-cmdline' -- Cmdline source for nvim-cmp
 	use 'L3MON4D3/LuaSnip'  -- Snippets plugin
 	use 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
+	-- themes
 	use 'sainnhe/everforest'
 	use "EdenEast/nightfox.nvim" -- Packer
+	use 'folke/tokyonight.nvim'
+	use {
+	  "loctvl842/monokai-pro.nvim",
+	  config = function()
+	    require("monokai-pro").setup()
+	  end
+	}
+	use { "diegoulloao/neofusion.nvim" }
+	-- terminal
 	use 'voldikss/vim-floaterm'
 
 	use { 'echasnovski/mini.trailspace', branch = 'main', config = function()
@@ -103,7 +113,7 @@ require('packer').startup(function(use)
 end)
 
 
-vim.cmd([[colorscheme everforest]])
+vim.cmd([[colorscheme monokai-pro-spectrum]])
 
 -- mason.nvim setup
 require('mason').setup()
