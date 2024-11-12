@@ -263,6 +263,9 @@ map('n', '<Leader>c', '', opts)
 opts.desc = "open command buffer"
 map('n', '<Leader>cb', 'q:', opts)
 
+opts.desc = "Mason"
+map('n', '<Leader>M', ':Mason<CR>', opts)
+
 map('t', '<C-j>', '<C-\\><C-n>:FloatermNew<CR>', opts)
 map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
 map('t', '<C-l>', '<C-\\><C-n>:FloatermNext<CR>', opts)
