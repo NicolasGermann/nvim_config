@@ -264,7 +264,7 @@ opts.desc = "open command buffer"
 map('n', '<Leader>cb', 'q:', opts)
 
 opts.desc = "Mason"
-map('n', '<Leader>M', ':Mason<CR>', opts)
+map('n', '<Leader>m', ':Mason<CR>', opts)
 
 map('t', '<C-j>', '<C-\\><C-n>:FloatermNew<CR>', opts)
 map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
