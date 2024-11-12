@@ -237,7 +237,7 @@ map('n', '<Leader>w', ':w<CR>', opts)
 opts.desc = "quit"
 map('n', '<Leader>q', ':q<CR>', opts)
 opts.desc = "clear search"
-map('n', '<Leader>c', ':noh<CR>', opts)
+map('n', '<Leader>cc', ':noh<CR>', opts)
 opts.desc = "directory"
 map('n', '<Leader>d', ':e .<CR>', opts)
 opts.desc = "terminal toggle"
@@ -257,6 +257,11 @@ map("n", "<leader>tf",
 opts.desc = "open nvim config"
 map('n', '<Leader>i', ':e ~/.config/nvim/init.lua<CR>', opts)
 
+opts.desc = "command shortcuts"
+map('n', '<Leader>c', '', opts)
+
+opts.desc = "open command buffer"
+map('n', '<Leader>cb', 'q:', opts)
 
 map('t', '<C-j>', '<C-\\><C-n>:FloatermNew<CR>', opts)
 map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
