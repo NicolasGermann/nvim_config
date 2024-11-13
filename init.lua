@@ -263,6 +263,9 @@ map('n', '<Leader>c', '', opts)
 opts.desc = "open command buffer"
 map('n', '<Leader>cb', 'q:', opts)
 
+opts.desc = "open quickfix"
+map('n', '<Leader>cf', ':copen<CR>', opts)
+
 opts.desc = "Mason"
 map('n', '<Leader>m', ':Mason<CR>', opts)
 
