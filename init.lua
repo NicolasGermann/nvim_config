@@ -32,11 +32,6 @@ require('packer').startup(function(use)
 	}
 
 	use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
-	use {
-		"ThePrimeagen/harpoon",
-		branch = "harpoon2",
-		requires = { { "nvim-lua/plenary.nvim" } }
-	}
 
 	-- nvim-treesitter für bessere Syntaxhervorhebung
 	use {
@@ -71,14 +66,17 @@ require('packer').startup(function(use)
 	use "EdenEast/nightfox.nvim" -- Packer
 	use 'folke/tokyonight.nvim'
 	use {
-	  "loctvl842/monokai-pro.nvim",
-	  config = function()
-	    require("monokai-pro").setup()
-	  end
+		"loctvl842/monokai-pro.nvim",
+		config = function()
+			require("monokai-pro").setup()
+		end
 	}
 	use { "diegoulloao/neofusion.nvim" }
 	-- terminal
-	use 'voldikss/vim-floaterm'
+
+	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
+		require("toggleterm").setup()
+	end }
 
 	use { 'echasnovski/mini.trailspace', branch = 'main', config = function()
 		require('mini.trailspace').setup()
@@ -88,9 +86,6 @@ require('packer').startup(function(use)
 	end }
 	use { 'echasnovski/mini.pairs', branch = 'main', config = function()
 		require('mini.pairs').setup()
-	end }
-	use { 'echasnovski/mini.statusline', branch = 'main', config = function()
-		require('mini.statusline').setup()
 	end }
 	use { 'echasnovski/mini.misc', branch = 'main', config = function()
 		require('mini.misc').setup()
@@ -110,11 +105,34 @@ require('packer').startup(function(use)
 	use { 'echasnovski/mini.animate', branch = 'main', config = function()
 		require('mini.animate').setup()
 	end }
+
+	use {
+		'nvim-lualine/lualine.nvim',
+		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+	}
 end)
 
 
 vim.cmd([[colorscheme monokai-pro-spectrum]])
 
+
+-- lualine
+require('lualine').setup {
+	options = {
+		icons_enabled = false,
+		component_separators = { left = '|', right = '|' },
+		section_separators = { left = '|', right = '|' },
+	},
+	sections = {
+		lualine_a = { 'mode' },
+		lualine_b = { 'branch', 'diagnostics' },
+		lualine_c = { 'filename' },
+		lualine_x = { 'filetype' },
+		lualine_y = { 'progress' },
+		lualine_z = { 'location' }
+	},
+	extensions = { 'mason', 'oil' }
+}
 -- mason.nvim setup
 require('mason').setup()
 require('mason-lspconfig').setup({
@@ -208,16 +226,13 @@ local opts = { noremap = true, silent = true }
 
 -- Leertaste als Leader-Taste setzen
 vim.g.mapleader = ' '
-vim.g.floaterm_position = 'topleft'
-vim.g.floaterm_height = 0.3
-vim.g.floaterm_width = 0.4
 
 --line counting
 vim.wo.relativenumber = true
 
 -- Telescope Funktionen unter Leertaste belegen
 map('n', '<Leader>f', ':Telescope find_files<CR>', opts)
-map('n', '<Leader>G', ':Telescope live_grep<CR>', opts)
+map('n', '<Leader>g', ':Telescope live_grep<CR>', opts)
 map('n', '<Leader>b', ':Telescope buffers<CR>', opts)
 
 -- LSP Funktionen unter Leertaste belegen
@@ -241,21 +256,25 @@ map('n', '<Leader>cc', ':noh<CR>', opts)
 opts.desc = "directory"
 map('n', '<Leader>d', ':e .<CR>', opts)
 opts.desc = "terminal toggle"
-map('n', '<C-w>t', ':FloatermToggle<CR>', opts)
+map('n', '<C-w>t', ':ToggleTermToggleAll<CR>', opts)
 opts.desc = "terminal toggle"
-map('n', '<Leader>tt', ':FloatermToggle<CR>', opts)
+map('n', '<Leader>tt', ':ToggleTermToggleAll<CR>', opts)
 opts.desc = "terminal"
-map('n', '<Leader>t','',  opts)
+map('n', '<Leader>t', '', opts)
 opts.desc = "terminal kill"
-map('n', '<Leader>tk', ':FloatermKill<CR>', opts)
-opts.desc = "terminal new"
-map('n', '<Leader>tn', ':FloatermNew<CR>', opts)
-opts.desc = "create large terminal"
-map("n", "<leader>tf",
-	":FloatermNew --height=0.9 --width=0.9 --wintype=float --name=lazygit --position=center<CR>",
-	opts)
+map('n', '<Leader>tk', ':bdelete!<CR>', opts)
+opts.desc = "terminal horizontal"
+map('n', '<Leader>th', ':ToggleTerm dir=./ name=term direction=horizontal<CR>', opts)
+opts.desc = "terminal vertical"
+map('n', '<Leader>tv', ':ToggleTerm dir=./ name=term direction=vertical<CR>', opts)
+opts.desc = "terminal float"
+map('n', '<Leader>tf', ':ToggleTerm dir=./ name=term direction=float<CR>', opts)
+
 opts.desc = "open nvim config"
 map('n', '<Leader>i', ':e ~/.config/nvim/init.lua<CR>', opts)
+
+opts.desc = "kill buffer"
+map('n', '<C-k>', ':bdelete!<CR>', opts)
 
 opts.desc = "command shortcuts"
 map('n', '<Leader>c', '', opts)
@@ -269,11 +288,7 @@ map('n', '<Leader>cf', ':copen<CR>', opts)
 opts.desc = "Mason"
 map('n', '<Leader>m', ':Mason<CR>', opts)
 
-map('t', '<C-j>', '<C-\\><C-n>:FloatermNew<CR>', opts)
-map('t', '<C-w>t', '<C-\\><C-n>:FloatermToggle<CR>', opts)
-map('t', '<C-l>', '<C-\\><C-n>:FloatermNext<CR>', opts)
-map('t', '<C-h>', '<C-\\><C-n>:FloatermPrev<CR>', opts)
-map('t', '<C-k>', '<C-\\><C-n>:FloatermKill<CR>', opts)
+map('t', '<C-w>t', '<C-\\><C-n>:ToggleTermToggleAll<CR>', opts)
 map('t', '<C-n>', '<C-\\><C-n>', opts)
 
 -- Strg-w-Befehle im Terminal-Modus aktivieren
@@ -282,41 +297,3 @@ vim.api.nvim_set_keymap('t', '<C-w>h', '<C-\\><C-n><C-w>h', opts) -- Wechsel zu 
 vim.api.nvim_set_keymap('t', '<C-w>j', '<C-\\><C-n><C-w>j', opts) -- Wechsel zu unterem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>k', '<C-\\><C-n><C-w>k', opts) -- Wechsel zu oberem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
-
--- harpoon
-Harpoon = require("harpoon")
-
--- REQUIRED
-Harpoon:setup()
--- -- REQUIRED
---
-opts.desc = "harpoon"
-map("n", "<leader>h", '', opts)
-opts.desc = "harpoon add"
-map("n", "<leader>ha", ':lua Harpoon:list():add() <CR>', opts)
-opts.desc = "harpoon delete"
-map("n", "<leader>hd", ':lua Harpoon:list():remove() <CR>', opts)
-opts.desc = "harpoon list"
-map("n", "<leader>hh", ':lua Harpoon.ui:toggle_quick_menu(Harpoon:list()) <CR>', opts)
---
-opts.desc = "harpoon select first"
-map("n", "<C-h>", ":lua Harpoon:list():select(1) <CR>", opts)
-opts.desc = "harpoon select second"
-map("n", "<C-j>", ":lua Harpoon:list():select(2) <CR>", opts)
-opts.desc = "harpoon select third"
-map("n", "<C-k>", ":lua Harpoon:list():select(3) <CR>", opts)
-opts.desc = "harpoon select fourth"
-map("n", "<C-l>", ":lua Harpoon:list():select(4) <CR>", opts)
----
-opts.desc = "lazygit"
-map("n", "<leader>g",
-	":FloatermNew --height=0.9 --width=0.9 --wintype=float --name=lazygit --position=center --autoclose=2 lazygit <CR>",
-	opts)
-
--- float Window
-function Floatwindow(width, height)
-	vim.api.nvim_open_win(vim.api.nvim_create_buf(false, true), true,
-	{relative='editor', width=width, height=height, row=math.floor((vim.o.lines - height) / 2), col=math.floor((vim.o.columns - width) / 2), style='minimal'})
-end
-map('n', '<C-w>f', ':lua Floatwindow(200,50) <CR>', opts)
-
