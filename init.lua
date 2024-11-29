@@ -297,3 +297,21 @@ vim.api.nvim_set_keymap('t', '<C-w>h', '<C-\\><C-n><C-w>h', opts) -- Wechsel zu 
 vim.api.nvim_set_keymap('t', '<C-w>j', '<C-\\><C-n><C-w>j', opts) -- Wechsel zu unterem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>k', '<C-\\><C-n><C-w>k', opts) -- Wechsel zu oberem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
+
+
+-- llama starten
+local ollama_job_id = nil
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    ollama_job_id = vim.fn.jobstart('ollama serve')
+  end
+})
+
+vim.api.nvim_create_autocmd("VimLeave", {
+  callback = function()
+    if ollama_job_id then
+      vim.fn.jobstop(ollama_job_id)
+    end
+  end
+})
