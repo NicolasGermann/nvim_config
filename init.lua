@@ -34,10 +34,10 @@ require('packer').startup(function(use)
 	use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
 
 	-- nvim-treesitter für bessere Syntaxhervorhebung
-	use {
-		'nvim-treesitter/nvim-treesitter',
-		run = ':TSUpdate'
-	}
+	-- use {
+	-- 	'nvim-treesitter/nvim-treesitter',
+	-- 	run = ':TSUpdate'
+	-- }
 
 	-- which-key.nvim für besseres Mapping-Menü
 	use {
@@ -73,10 +73,6 @@ require('packer').startup(function(use)
 	}
 	use { "diegoulloao/neofusion.nvim" }
 	-- terminal
-
-	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
-		require("toggleterm").setup()
-	end }
 
 	use { 'echasnovski/mini.trailspace', branch = 'main', config = function()
 		require('mini.trailspace').setup()
@@ -120,8 +116,8 @@ vim.cmd([[colorscheme monokai-pro-spectrum]])
 require('lualine').setup {
 	options = {
 		icons_enabled = false,
-		component_separators = { left = '|', right = '|' },
-		section_separators = { left = '|', right = '|' },
+		component_separators = { left = '', right = '' },
+		section_separators = { left = '', right = '' },
 	},
 	sections = {
 		lualine_a = { 'mode' },
@@ -149,14 +145,14 @@ require('telescope').setup {
 	}
 }
 
--- nvim-treesitter setup
-require('nvim-treesitter.configs').setup {
-	ensure_installed = {}, -- Sprachen, die installiert werden sollen
-	highlight = {
-		enable = true, -- false will disable the whole extension
-		additional_vim_regex_highlighting = false,
-	},
-}
+-- -- nvim-treesitter setup
+-- require('nvim-treesitter.configs').setup {
+-- 	ensure_installed = {}, -- Sprachen, die installiert werden sollen
+-- 	highlight = {
+-- 		enable = true, -- false will disable the whole extension
+-- 		additional_vim_regex_highlighting = false,
+-- 	},
+-- }
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
@@ -256,19 +252,6 @@ map('n', '<Leader>cc', ':noh<CR>', opts)
 opts.desc = "directory"
 map('n', '<Leader>d', ':e .<CR>', opts)
 opts.desc = "terminal toggle"
-map('n', '<C-w>t', ':ToggleTermToggleAll<CR>', opts)
-opts.desc = "terminal toggle"
-map('n', '<Leader>tt', ':ToggleTermToggleAll<CR>', opts)
-opts.desc = "terminal"
-map('n', '<Leader>t', '', opts)
-opts.desc = "terminal kill"
-map('n', '<Leader>tk', ':bdelete!<CR>', opts)
-opts.desc = "terminal horizontal"
-map('n', '<Leader>th', ':ToggleTerm dir=./ name=term direction=horizontal<CR>', opts)
-opts.desc = "terminal vertical"
-map('n', '<Leader>tv', ':ToggleTerm dir=./ name=term direction=vertical<CR>', opts)
-opts.desc = "terminal float"
-map('n', '<Leader>tf', ':ToggleTerm dir=./ name=term direction=float<CR>', opts)
 
 opts.desc = "open nvim config"
 map('n', '<Leader>i', ':e ~/.config/nvim/init.lua<CR>', opts)
@@ -288,8 +271,11 @@ map('n', '<Leader>cf', ':copen<CR>', opts)
 opts.desc = "Mason"
 map('n', '<Leader>m', ':Mason<CR>', opts)
 
-map('t', '<C-w>t', '<C-\\><C-n>:ToggleTermToggleAll<CR>', opts)
-map('t', '<C-n>', '<C-\\><C-n>', opts)
+map('t', '<C-c>', '<C-\\><C-n>', opts)
+map('t', '<C-n>', '<C-c>', opts)
+
+--ctrl-c angewöhnen für normalmodus
+map('i', '<ESC>', '', opts)
 
 -- Strg-w-Befehle im Terminal-Modus aktivieren
 local opts = { noremap = true, silent = true }
@@ -303,15 +289,46 @@ vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu 
 local ollama_job_id = nil
 
 vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    ollama_job_id = vim.fn.jobstart('ollama serve')
-  end
+	callback = function()
+		ollama_job_id = vim.fn.jobstart('ollama serve')
+	end
 })
 
 vim.api.nvim_create_autocmd("VimLeave", {
-  callback = function()
-    if ollama_job_id then
-      vim.fn.jobstop(ollama_job_id)
-    end
-  end
+	callback = function()
+		if ollama_job_id then
+			vim.fn.jobstop(ollama_job_id)
+		end
+	end
 })
+
+function LanguageToolCheck(opts)
+	vim.fn.setqflist({}, 'r')
+	vim.fn.setloclist(0, {dt}, 'r')
+
+	string  = vim.fn.system('languagetool -adl ' .. vim.fn.expand(opts.fargs[1]))
+
+	local messages = string.gmatch(string, 'Message: ([^.]*)')
+	local suggestion = string.gmatch(string, 'Suggestion: ([^\n]*)')
+	local linecodes = string.gmatch(string, '(%d*)%.%)% Line% (%d*), column (%d*)')
+
+	for errn, lin, coln in linecodes do
+		local dt = {
+			col = coln,
+			nr = errn,
+			pattern = nil,
+			lnum = lin,
+			text = messages(),
+			end_col = 0,
+			bufnr = vim.api.nvim_get_current_buf(),
+			module = nil,
+			type = nil,
+			vcol = 0,
+			valid = 0,
+			end_lnum = 0
+		}
+		vim.fn.setqflist({ dt }, 'a')
+		vim.fn.setloclist(0, {dt}, 'a')
+	end
+end
+vim.api.nvim_create_user_command('LanguageToolCheck', LanguageToolCheck, {nargs = 1, range = false})
