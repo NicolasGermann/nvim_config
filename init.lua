@@ -316,6 +316,8 @@ vim.api.nvim_set_keymap('t', '<C-w>h', '<C-\\><C-n><C-w>h', opts) -- Wechsel zu 
 vim.api.nvim_set_keymap('t', '<C-w>j', '<C-\\><C-n><C-w>j', opts) -- Wechsel zu unterem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>k', '<C-\\><C-n><C-w>k', opts) -- Wechsel zu oberem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
+vim.api.nvim_set_keymap('t', '<C-w>t', '<C-\\><C-n><C-6>', opts) -- Wechsel zu rechtem Fenster
+vim.api.nvim_set_keymap('n', '<C-w>t', '<C-w>t :b term<CR>i', opts) -- Wechsel zu rechtem Fenster
 
 
 -- llama starten
@@ -334,34 +336,3 @@ vim.api.nvim_create_autocmd("VimLeave", {
 		end
 	end
 })
-
-function LanguageToolCheck(opts)
-	vim.fn.setqflist({}, 'r')
-	vim.fn.setloclist(0, {dt}, 'r')
-
-	string  = vim.fn.system('languagetool -adl ' .. vim.fn.expand(opts.fargs[1]))
-
-	local messages = string.gmatch(string, 'Message: ([^.]*)')
-	local suggestion = string.gmatch(string, 'Suggestion: ([^\n]*)')
-	local linecodes = string.gmatch(string, '(%d*)%.%)% Line% (%d*), column (%d*)')
-
-	for errn, lin, coln in linecodes do
-		local dt = {
-			col = coln,
-			nr = errn,
-			pattern = nil,
-			lnum = lin,
-			text = messages(),
-			end_col = 0,
-			bufnr = vim.api.nvim_get_current_buf(),
-			module = nil,
-			type = nil,
-			vcol = 0,
-			valid = 0,
-			end_lnum = 0
-		}
-		vim.fn.setqflist({ dt }, 'a')
-		vim.fn.setloclist(0, {dt}, 'a')
-	end
-end
-vim.api.nvim_create_user_command('LanguageToolCheck', LanguageToolCheck, {nargs = 1, range = false})
