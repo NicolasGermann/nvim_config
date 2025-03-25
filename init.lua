@@ -1,112 +1,119 @@
--- Packer installieren, falls noch nicht installiert
-local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-	vim.fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
-	vim.cmd [[packadd packer.nvim]]
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
--- packer.nvim Plugin manager configuration
-require('packer').startup(function(use)
-	-- Packer selbst aktualisieren
-	use 'wbthomason/packer.nvim'
+-- Plugin specifications
+require("lazy").setup({
+  -- Mason für LSP-Installationen
+  {
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
+  },
 
-	-- mason.nvim für LSP-Installationen
-	use {
-		'williamboman/mason.nvim',
-		'williamboman/mason-lspconfig.nvim',
-		'neovim/nvim-lspconfig',
-		run = ':MasonUpdate' -- :MasonUpdate ausführen, wenn dieses Paket installiert wird
-	}
+  -- Oil.nvim
+  {
+    "stevearc/oil.nvim",
+    config = function()
+      require("oil").setup()
+    end,
+  },
 
-	use {
-		"stevearc/oil.nvim",
-		config = function()
-			require("oil").setup()
-		end,
-	}
+  -- Telescope
+  {
+    'nvim-telescope/telescope.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' }
+  },
 
-	-- telescope.nvim für Dateisuche und mehr
-	use {
-		'nvim-telescope/telescope.nvim',
-		requires = { { 'nvim-lua/plenary.nvim' } }
-	}
+  -- Treesitter
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate'
+  },
 
-	use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
+  -- Which-key
+  {
+    "folke/which-key.nvim",
+    config = function()
+      require("which-key").setup()
+    end
+  },
 
-	-- nvim-treesitter für bessere Syntaxhervorhebung
-	-- use {
-	-- 	'nvim-treesitter/nvim-treesitter',
-	-- 	run = ':TSUpdate'
-	-- }
+  -- Autocomplete
+  'hrsh7th/nvim-cmp',
+  'hrsh7th/cmp-nvim-lsp',
+  'hrsh7th/cmp-buffer',
+  'hrsh7th/cmp-path',
+  'hrsh7th/cmp-cmdline',
+  'L3MON4D3/LuaSnip',
+  'saadparwaiz1/cmp_luasnip',
 
-	-- which-key.nvim für besseres Mapping-Menü
-	use {
-		"folke/which-key.nvim",
-		config = function()
-			require("which-key").setup {
-				-- your configuration comes here
-				-- or leave it empty to use the default settings
-				-- refer to the configuration section below
-			}
-		end
-	}
+  -- Themes
+  'sainnhe/everforest',
+  "EdenEast/nightfox.nvim",
+  'folke/tokyonight.nvim',
+  {
+    "loctvl842/monokai-pro.nvim",
+    config = function()
+      require("monokai-pro").setup()
+    end
+  },
+  "diegoulloao/neofusion.nvim",
 
+  -- Mini plugins
+  { 'echasnovski/mini.trailspace', config = function() require('mini.trailspace').setup() end },
+  { 'echasnovski/mini.starter', config = function() require('mini.starter').setup() end },
+  { 'echasnovski/mini.pairs', config = function() require('mini.pairs').setup() end },
+  { 'echasnovski/mini.misc', config = function() require('mini.misc').setup() end },
+  { 'echasnovski/mini.indentscope', config = function() require('mini.indentscope').setup() end },
+  { 'echasnovski/mini.cursorword', config = function() require('mini.cursorword').setup() end },
+  { 'echasnovski/mini.comment', config = function() require('mini.comment').setup() end },
+  { 'echasnovski/mini.basics', config = function() require('mini.basics').setup() end },
+  { 'echasnovski/mini.animate', config = function() require('mini.animate').setup() end },
 
+  -- Lualine
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
+  },
 
-	-- nvim-cmp für Autocomplete
-	use 'hrsh7th/nvim-cmp'  -- Autocompletion plugin
-	use 'hrsh7th/cmp-nvim-lsp' -- LSP source for nvim-cmp
-	use 'hrsh7th/cmp-buffer' -- Buffer source for nvim-cmp
-	use 'hrsh7th/cmp-path'  -- Path source for nvim-cmp
-	use 'hrsh7th/cmp-cmdline' -- Cmdline source for nvim-cmp
-	use 'L3MON4D3/LuaSnip'  -- Snippets plugin
-	use 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
-	-- themes
-	use 'sainnhe/everforest'
-	use "EdenEast/nightfox.nvim" -- Packer
-	use 'folke/tokyonight.nvim'
-	use {
-		"loctvl842/monokai-pro.nvim",
-		config = function()
-			require("monokai-pro").setup()
-		end
-	}
-	use { "diegoulloao/neofusion.nvim" }
-	-- terminal
-
-	use { 'echasnovski/mini.trailspace', branch = 'main', config = function()
-		require('mini.trailspace').setup()
-	end }
-	use { 'echasnovski/mini.starter', branch = 'main', config = function()
-		require('mini.starter').setup()
-	end }
-	use { 'echasnovski/mini.pairs', branch = 'main', config = function()
-		require('mini.pairs').setup()
-	end }
-	use { 'echasnovski/mini.misc', branch = 'main', config = function()
-		require('mini.misc').setup()
-	end }
-	use { 'echasnovski/mini.indentscope', branch = 'main', config = function()
-		require('mini.indentscope').setup()
-	end }
-	use { 'echasnovski/mini.cursorword', branch = 'main', config = function()
-		require('mini.cursorword').setup()
-	end }
-	use { 'echasnovski/mini.comment', branch = 'main', config = function()
-		require('mini.comment').setup()
-	end }
-	use { 'echasnovski/mini.basics', branch = 'main', config = function()
-		require('mini.basics').setup()
-	end }
-	use { 'echasnovski/mini.animate', branch = 'main', config = function()
-		require('mini.animate').setup()
-	end }
-
-	use {
-		'nvim-lualine/lualine.nvim',
-		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
-	}
-end)
+  -- Noice
+  {
+    "folke/noice.nvim",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+    config = function()
+      require("noice").setup({
+        lsp = {
+          override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true,
+          },
+        },
+        presets = {
+          bottom_search = true,
+          command_palette = true,
+          long_message_to_split = true,
+          inc_rename = false,
+          lsp_doc_border = false,
+        },
+      })
+    end
+  },
+})
 
 
 vim.cmd([[colorscheme monokai-pro-spectrum]])
@@ -136,7 +143,33 @@ require('mason-lspconfig').setup({
 })
 
 -- LSP Konfiguration
-local lspconfig = require('lspconfig')
+local lspconfig = require 'lspconfig'
+local configs = require 'lspconfig/configs'
+local util = require 'lspconfig/util'
+
+if not lspconfig.ltex then
+	configs.ltex = {
+		default_config = {
+			cmd = { "ltex-ls" },
+			filetypes = { 'tex', 'bib', 'md' },
+			settings = {
+				ltex = {
+					enabled = { "latex", "tex", "bib", "md" },
+					checkFrequency = "save",
+					language = "de-DE",
+					diagnosticSeverity = "information",
+					setenceCacheSize = 5000,
+					additionalRules = {
+						enablePickyRules = true,
+						motherTongue = "de-DE",
+					},
+				}
+			},
+		},
+	}
+end
+lspconfig.ltex.setup {}
+
 
 -- telescope.nvim setup
 require('telescope').setup {
@@ -145,14 +178,14 @@ require('telescope').setup {
 	}
 }
 
--- -- nvim-treesitter setup
--- require('nvim-treesitter.configs').setup {
--- 	ensure_installed = {}, -- Sprachen, die installiert werden sollen
--- 	highlight = {
--- 		enable = true, -- false will disable the whole extension
--- 		additional_vim_regex_highlighting = false,
--- 	},
--- }
+-- nvim-treesitter setup
+require('nvim-treesitter.configs').setup {
+	ensure_installed = {}, -- Sprachen, die installiert werden sollen
+	highlight = {
+		enable = true, -- false will disable the whole extension
+		additional_vim_regex_highlighting = false,
+	},
+}
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
@@ -283,6 +316,8 @@ vim.api.nvim_set_keymap('t', '<C-w>h', '<C-\\><C-n><C-w>h', opts) -- Wechsel zu 
 vim.api.nvim_set_keymap('t', '<C-w>j', '<C-\\><C-n><C-w>j', opts) -- Wechsel zu unterem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>k', '<C-\\><C-n><C-w>k', opts) -- Wechsel zu oberem Fenster
 vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
+vim.api.nvim_set_keymap('t', '<C-w>t', '<C-\\><C-n><C-6>', opts) -- Wechsel zu rechtem Fenster
+vim.api.nvim_set_keymap('n', '<C-w>t', '<C-w>t :b term<CR>i', opts) -- Wechsel zu rechtem Fenster
 
 
 -- llama starten
@@ -301,34 +336,3 @@ vim.api.nvim_create_autocmd("VimLeave", {
 		end
 	end
 })
-
-function LanguageToolCheck(opts)
-	vim.fn.setqflist({}, 'r')
-	vim.fn.setloclist(0, {dt}, 'r')
-
-	string  = vim.fn.system('languagetool -adl ' .. vim.fn.expand(opts.fargs[1]))
-
-	local messages = string.gmatch(string, 'Message: ([^.]*)')
-	local suggestion = string.gmatch(string, 'Suggestion: ([^\n]*)')
-	local linecodes = string.gmatch(string, '(%d*)%.%)% Line% (%d*), column (%d*)')
-
-	for errn, lin, coln in linecodes do
-		local dt = {
-			col = coln,
-			nr = errn,
-			pattern = nil,
-			lnum = lin,
-			text = messages(),
-			end_col = 0,
-			bufnr = vim.api.nvim_get_current_buf(),
-			module = nil,
-			type = nil,
-			vcol = 0,
-			valid = 0,
-			end_lnum = 0
-		}
-		vim.fn.setqflist({ dt }, 'a')
-		vim.fn.setloclist(0, {dt}, 'a')
-	end
-end
-vim.api.nvim_create_user_command('LanguageToolCheck', LanguageToolCheck, {nargs = 1, range = false})
