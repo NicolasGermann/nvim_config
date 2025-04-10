@@ -228,6 +228,7 @@ local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
 
 -- Leertaste als Leader-Taste setzen
+map("n", "<Space>", "", opts)
 vim.g.mapleader = ' '
 
 --line counting
