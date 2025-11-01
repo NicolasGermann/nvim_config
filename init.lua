@@ -145,30 +145,6 @@ else
 	local configs = require 'lspconfig/configs'
 	local util = require 'lspconfig/util'
 
-	if not lspconfig.ltex then
-		configs.ltex = {
-			default_config = {
-				cmd = { "ltex-ls" },
-				filetypes = { 'tex', 'bib', 'md' },
-				settings = {
-					ltex = {
-						enabled = { "latex", "tex", "bib", "md" },
-						checkFrequency = "save",
-						language = "de-DE",
-						diagnosticSeverity = "information",
-						setenceCacheSize = 5000,
-						additionalRules = {
-							enablePickyRules = true,
-							motherTongue = "de-DE",
-						},
-					}
-				},
-			},
-		}
-	end
-	lspconfig.ltex.setup {}
-
-
 	-- telescope.nvim setup
 	require('telescope').setup {
 		defaults = {
