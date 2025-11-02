@@ -292,8 +292,6 @@ else
 	vim.api.nvim_set_keymap('t', '<C-w>t', '<C-\\><C-n><C-6>', opts) -- Wechsel zu rechtem Fenster
 	vim.api.nvim_set_keymap('n', '<C-w>t', '<C-w>t :b term<CR>i', opts) -- Wechsel zu rechtem Fenster
 
-	--inline text--
-
 	vim.diagnostic.config({
 		virtual_text = true, -- Inline Errors/Warnungen aktivieren
 	})
