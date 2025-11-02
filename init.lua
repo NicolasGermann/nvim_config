@@ -33,6 +33,7 @@ else
 		})
 	end
 	vim.opt.rtp:prepend(lazypath)
+	vim.opt.relativenumber = true
 
 	-- Plugin specifications
 	require("lazy").setup({
@@ -102,6 +103,7 @@ else
 		{ 'echasnovski/mini.comment',     config = function() require('mini.comment').setup() end },
 		{ 'echasnovski/mini.basics',      config = function() require('mini.basics').setup() end },
 		{ 'echasnovski/mini.animate',     config = function() require('mini.animate').setup() end },
+		{'cirnovsky/vim-gotoword'},
 
 		-- Lualine
 		{
@@ -229,8 +231,8 @@ else
 	map("n", "<Space>", "", opts)
 	vim.g.mapleader = ' '
 
-	--line counting
-	vim.wo.relativenumber = true
+	--go-to
+	map('n', 'gw', ':GotoWord<CR>', opts)
 
 	-- Telescope Funktionen unter Leertaste belegen
 	map('n', '<Leader>f', ':Telescope find_files<CR>', opts)
