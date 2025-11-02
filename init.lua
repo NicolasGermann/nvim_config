@@ -19,8 +19,6 @@ if vim.g.vscode then
 
 	opts.desc = "open nvim config"
 	map('n', '<Leader>i', ':e ~/.config/nvim/init.lua<CR>', opts)
-
-
 else
 	-- Bootstrap lazy.nvim
 	local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -293,6 +291,12 @@ else
 	vim.api.nvim_set_keymap('t', '<C-w>l', '<C-\\><C-n><C-w>l', opts) -- Wechsel zu rechtem Fenster
 	vim.api.nvim_set_keymap('t', '<C-w>t', '<C-\\><C-n><C-6>', opts) -- Wechsel zu rechtem Fenster
 	vim.api.nvim_set_keymap('n', '<C-w>t', '<C-w>t :b term<CR>i', opts) -- Wechsel zu rechtem Fenster
+
+	--inline text--
+
+	vim.diagnostic.config({
+		virtual_text = true, -- Inline Errors/Warnungen aktivieren
+	})
 
 
 	-- llama starten
